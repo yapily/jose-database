@@ -1,0 +1,8 @@
+jose-database:
+  keys-path: keys
+  encryption-method: A128CBC-HS256
+  token-format: JWS_JWE
+  actuator:
+    enabled: true
+    show-details: true
+

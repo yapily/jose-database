@@ -1,0 +1,8 @@
+jose-database:
+  keys-path: keys/
+  encryption-method: A256CBC_HS512
+  actuator:
+    enabled: true
+    show-details: true
+
+foo: bob

@@ -107,9 +107,9 @@ If you don't have revoked keys yet for example, set:
 }
 ``` 
 
-### FAQ
+# FAQ
 
-# Why do I need to have expired and revoked keys?
+## Why do I need to have expired and revoked keys?
 
 This is to allow key rotation. In order to avoid a downtime of your service during the key rotation, you will want to have to expired keys still available in order to decrypt fields that are not yet rotated.
 This allows a smooth migration window when you rotate your keys.
@@ -118,12 +118,12 @@ A general good practice is to not delete a key but more to mark it as revoked.
 
 The micro-service is not using the revoked keys at all, only displaying them in the actuator endpoints so you can track where you are in your key rotation.
 
-# Why would I want to encrypt a field using a JWT instead of using KMS?
+## Why would I want to encrypt a field using a JWT instead of using KMS?
 
 Performance wise, you can avoid a network call and do the action locally. It's also for a cost reason, by avoiding having to pay for your intense KMS usage. 
 This library offers you the possibilities to use custom keys, that you can encrypt with KMS for example and then into a git repo.
 
-# Why JOSE?
+## Why JOSE?
 
 It's a known standard and well approved in the industry, with libraries in multiple languages. This will facilitate the inter-operability between your different micro-services.
 It also have the advantages to offer the JWK and JWT is a relatively readable manner. 
@@ -133,7 +133,7 @@ If you want to know more about JOSE, we recommend reading the following standard
 - JWK - https://tools.ietf.org/html/rfc7517
 
 
-# Should I always use JWS_JWE ?
+## Should I always use JWS_JWE ?
 
 JWS_JWE is a format when you first encrypt the message and then sign it. Encrypting is quite heady in computation, therefore encryption the smallest payload possible is a good idea.
 Then signing becomes handy if you want to always make sure that the field you read has not be corrupted: Encryption is done using the encryption public key, which is by definition public. 

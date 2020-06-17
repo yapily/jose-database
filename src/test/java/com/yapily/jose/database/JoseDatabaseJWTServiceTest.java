@@ -11,15 +11,16 @@ package com.yapily.jose.database;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.KeyType;
-import com.nimbusds.jose.jwk.KeyUse;
-import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.*;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -38,6 +39,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,37 +50,70 @@ import static org.junit.jupiter.api.Assertions.*;
 @ComponentScan(basePackages = {"com.yapily"})
 @SpringBootTest(classes = {JoseDatabaseConfigurationProperties.class, JoseDatabaseJWTService.class, JoseDatabaseConfig.class})
 class JoseDatabaseJWTServiceTest {
-    @Autowired
-    private JoseDatabaseJWTService joseDatabaseJWTService;
-    @Autowired
-    private JoseDatabaseConfig joseDatabaseConfig;
 
     private String payload = "Hello, world!";
 
-    @Test
-    void encryptPayload() throws JOSEException, ParseException {
+    private static Stream<Arguments> provideJoseDatabaseConfigs() throws Exception {
+        return Stream.of(
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys-rsa")
+                        .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                        .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build())),
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys-ec")
+                        .jweAlgorithm(JWEAlgorithm.ECDH_ES_A256KW.getName())
+                        .jwsAlgorithm(JWSAlgorithm.ES256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build()))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void encryptPayload(JoseDatabaseConfig config) throws JOSEException, ParseException {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
 
         JWEObject jwe = JWEObject.parse(joseDatabaseJWTService.encryptPayload(payload));
-        jwe.decrypt(new RSADecrypter((RSAKey) joseDatabaseConfig.getCurrentEncryptionKey().get()));
+        if (config.getKeysPath().equals("keys-rsa")) {
+            jwe.decrypt(new RSADecrypter((RSAKey) config.getCurrentEncryptionKey().get()));
+        } else {
+            jwe.decrypt(new ECDHDecrypter((ECKey) config.getCurrentEncryptionKey().get()));
+        }
         assertEquals(payload, jwe.getPayload().toString());
     }
 
-    @Test
-    void decryptJWE() throws JOSEException, ParseException {
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void decryptJWE(JoseDatabaseConfig config) throws JOSEException, ParseException {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
         assertEquals(payload, joseDatabaseJWTService.decryptJWE((joseDatabaseJWTService.encryptPayload(payload))));
     }
 
-    @Test
-    void signPayload() throws JOSEException, ParseException {
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void signPayload(JoseDatabaseConfig config) throws JOSEException, ParseException {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
+
         JWSObject jwsObject = JWSObject.parse(joseDatabaseJWTService.signPayload(payload));
 
-        JWSVerifier verifier = new RSASSAVerifier((RSAKey) joseDatabaseConfig.getCurrentSigningKey().get());
-
+        JWSVerifier verifier;
+        if (config.getKeysPath().equals("keys-rsa")) {
+            verifier = new RSASSAVerifier((RSAKey) config.getCurrentSigningKey().get());
+        } else {
+            verifier = new ECDSAVerifier((ECKey) config.getCurrentSigningKey().get());
+        }
         assertTrue(jwsObject.verify(verifier));
     }
 
-    @Test
-    void verifyJWS() throws JOSEException, ParseException {
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void verifyJWS(JoseDatabaseConfig config) throws JOSEException, ParseException {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
+
         assertThat(joseDatabaseJWTService.verifyJWS((joseDatabaseJWTService.signPayload(payload)))).isEqualTo(payload);
     }
 }

@@ -1,0 +1,22 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "d": "M59mxjaPWvI3VMqRpWvMaI6Ne4QV1w32-_GXDCuRsjQ",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "expired-signing-key",
+      "x": "x4QcR5ChYQ4ypwT451dd_JpfE2CFE7hxUEYHGQjNBJU",
+      "y": "gpvVlUkQ67k2K6Ve3DZKWnvQrPZri3zP2qQSlseOVic"
+    },
+    {
+      "kty": "EC",
+      "d": "M59mxjaPWvI3VMqRpWvMaI6Ne4QV1w32-_GXDCuRsjQ",
+      "use": "enc",
+      "crv": "P-256",
+      "kid": "expired-encryption-key",
+      "x": "x4QcR5ChYQ4ypwT451dd_JpfE2CFE7hxUEYHGQjNBJU",
+      "y": "gpvVlUkQ67k2K6Ve3DZKWnvQrPZri3zP2qQSlseOVic"
+    }
+  ]
+}

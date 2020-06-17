@@ -44,9 +44,6 @@ public class JoseDatabaseConfig {
     private final Optional<JWK> currentEncryptionKey;
     private final Optional<JWK> currentSigningKey;
 
-    @Value("${foo}")
-    private String foo;
-
     public JoseDatabaseConfig(JoseDatabaseConfigurationProperties joseDatabaseConfigurationProperties) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -129,6 +126,10 @@ public class JoseDatabaseConfig {
 
     public JoseDatabaseTokenFormat getTokenFormat() {
         return joseDatabaseConfigurationProperties.getTokenFormat();
+    }
+
+    public String getKeysPath() {
+        return joseDatabaseConfigurationProperties.getKeysPath();
     }
 
     public JWSAlgorithm getJwsAlgorithm() {

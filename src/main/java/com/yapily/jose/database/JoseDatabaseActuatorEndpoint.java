@@ -49,8 +49,8 @@ public class JoseDatabaseActuatorEndpoint {
                     .expiredKeys(joseDatabaseConfig.getExpiredJwkSet().toPublicJWKSet())
                     .revokedKeys(joseDatabaseConfig.getRevokedJwkSet().toPublicJWKSet());
 
-            joseDatabaseConfig.getCurrentEncryptionKey().ifPresent(builder::currentEncryptionKey);
-            joseDatabaseConfig.getCurrentSigningKey().ifPresent(builder::currentSigningKey);
+            joseDatabaseConfig.getCurrentEncryptionKey().ifPresent(k -> builder.currentEncryptionKey(k.toPublicJWK()));
+            joseDatabaseConfig.getCurrentSigningKey().ifPresent(k -> builder.currentSigningKey(k.toPublicJWK()));
         } else {
             Map<JoseDatabaseKeyStatus, List<String>> keysByStatus = new HashMap<>();
             keysByStatus.put(JoseDatabaseKeyStatus.VALID, joseDatabaseConfig.getValidJwkSet().getKeys().stream().map(JWK::getKeyID).collect(Collectors.toList()));

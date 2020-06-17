@@ -9,10 +9,12 @@
  */
 package com.yapily.jose.database;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -22,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,21 +36,74 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {JoseDatabaseConfigurationProperties.class, JoseDatabaseAttributeConverter.class, JoseDatabaseJWTService.class})
 class JoseDatabaseAttributeConverterTest {
 
-    @Autowired
-    private JoseDatabaseAttributeConverter joseDatabaseAttributeConverter;
-    @Autowired
-    private JoseDatabaseJWTService joseDatabaseJWTService;
-
     private String attribute = "TheDude";
-    @Test
-    void convertToDatabaseColumn() throws ParseException, JOSEException {
+
+    private static Stream<Arguments> provideJoseDatabaseConfigs() throws Exception {
+        return Stream.of(
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys")
+                        .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                        .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build())),
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys")
+                        .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                        .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWS)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build())),
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys")
+                        .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                        .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWE_JWS)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build())),
+                Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                        .keysPath("keys")
+                        .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                        .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                        .tokenFormat(JoseDatabaseTokenFormat.JWE)
+                        .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                        .build()))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void convertToDatabaseColumn(JoseDatabaseConfig config) throws ParseException, JOSEException {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
+        JoseDatabaseAttributeConverter joseDatabaseAttributeConverter = new JoseDatabaseAttributeConverter(config, joseDatabaseJWTService);
+
         String attributeAsJWT = joseDatabaseAttributeConverter.convertToDatabaseColumn(attribute);
-        String resultingAttribute = joseDatabaseJWTService.decryptJWE(joseDatabaseJWTService.verifyJWS(attributeAsJWT));//No parse exception means it's indeed a JWE(JWS)
+        String resultingAttribute;
+        switch (config.getTokenFormat()) {
+
+            case JWS_JWE:
+                resultingAttribute = joseDatabaseJWTService.decryptJWE(joseDatabaseJWTService.verifyJWS(attributeAsJWT));//No parse exception means it's indeed a JWE(JWS)
+                break;
+            case JWE_JWS:
+                resultingAttribute = joseDatabaseJWTService.verifyJWS(joseDatabaseJWTService.decryptJWE(attributeAsJWT));//No parse exception means it's indeed a JWE(JWS)
+                break;
+            case JWS:
+                resultingAttribute = joseDatabaseJWTService.verifyJWS(attributeAsJWT);//No parse exception means it's indeed a JWE(JWS)
+                break;
+            case JWE:
+            default:
+                resultingAttribute = joseDatabaseJWTService.decryptJWE(attributeAsJWT);//No parse exception means it's indeed a JWE(JWS)
+                break;
+        }
         assertThat(resultingAttribute).isEqualTo(attribute);
     }
 
-    @Test
-    void convertToEntityAttribute() {
+    @ParameterizedTest
+    @MethodSource("provideJoseDatabaseConfigs")
+    void convertToEntityAttribute(JoseDatabaseConfig config) {
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
+        JoseDatabaseAttributeConverter joseDatabaseAttributeConverter = new JoseDatabaseAttributeConverter(config, joseDatabaseJWTService);
+
         String resultingAttribute = joseDatabaseAttributeConverter.convertToEntityAttribute(joseDatabaseAttributeConverter.convertToDatabaseColumn(attribute));
         assertThat(resultingAttribute).isEqualTo(attribute);
     }

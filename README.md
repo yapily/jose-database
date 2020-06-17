@@ -25,12 +25,45 @@ The main advantages is the inter-operability of using JOSE as a way of encryptin
 - Allow a key rotation implementation by having the concept of valid keys, expired keys and revoked keys
 - Custom actuator endpoint to identify the current state of the keys, from the angle of your micro-service
 
-# How it works
+# How to install
 
+## Dependency
+
+The library is on jcenter, you will first need to add jcenter repository into your pom
+
+```$xslt
+<repositories>
+  <repository>
+    <id>jcenter</id>
+    <url>https://jcenter.bintray.com/</url>
+  </repository>
+</repositories>
+```
+
+Then add the maven dependency:
+
+```
+<dependency>
+    <groupId>dev.openbanking4.spring.security</groupId>
+    <artifactId>spring-security-multi-auth-starter</artifactId>
+    <version>{latest.version}</version>
+</dependency>
+```
+Replacing `{latest.tag}`:
+
+As we are in CI and every commit is a release, it's very hard to predict the version number in this readme.
+In order to know the latest version, have a look at the tags list on this repo. The latest tag should be the version you should use
+
+Another way is to go directly to the jcenter central repository, and look for this project: https://bintray.com/beta/#/qcastel-yapily/jose-database/jose-database?tab=overview
+Jcenter will point you to the latest version to use.
+
+## Injecting the keys to your micro-services
 The library expect as input a set of keys. The recommendation would be to inject them from your kubernetes secrets and putting them in the classpath of the microservice.
 Once accessible by the service, the library will load the keys and use them for encrypting/signing/decrypting/validating the fields of your database.
 
+See the `setup the keys` section.
 
+## Specifying the field you want to encrypt
 For specifying a field that requires encryption:
 
 ```

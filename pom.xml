@@ -40,7 +40,7 @@
 
 	<distributionManagement>
 		<repository>
-			<id>bintray-jose-database</id>
+			<id>bintray-jose-database-yapily</id>
 			<name>Jose Database</name>
 			<url>https://api.bintray.com/maven/qcastel-yapily/jose-database/jose-database/;publish=1</url>
 		</repository>
@@ -102,7 +102,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>bintray-jose-database</id>
+			<id>bintray-jose-database-yapily</id>
 			<name>bintray</name>
 			<url>https://dl.bintray.com/qcastel-yapily/jose-database</url>
 		</repository>

@@ -29,15 +29,6 @@ jobs:
           package-url: https://github.com/yapily/jose-database
           package-license: Apache-2.0
 
-      - name: Temporarily disable "include administrators" branch protection
-        uses: benjefferies/branch-protection-bot@master
-        if: always()
-        with:
-          access-token: ${{ secrets.BOT_GITHUB_REPO_ACCESS_TOKEN }}
-          owner: yapily
-          enforce_admins: false
-          repo: jose-database
-
       - name: Release
         uses: qcastel/github-actions-maven-release@master
         with:
@@ -49,11 +40,3 @@ jobs:
           git-release-bot-email: "bot@yapily.com"
 
           access-token: ${{ secrets.BOT_GITHUB_REPO_ACCESS_TOKEN }}
-
-      - name: Enable "include administrators" branch protection
-        uses: benjefferies/branch-protection-bot@master
-        if: always()
-        with:
-          access-token: ${{ secrets.BOT_GITHUB_REPO_ACCESS_TOKEN }}
-          owner: qcastel-yapily
-          repo: jose-database

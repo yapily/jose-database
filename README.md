@@ -1,6 +1,6 @@
 | |Current Status|
 |---|---|
-|Build|[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fopenbanking4-dev%2Fspring-security-multi-auth%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/yapily/jose-database/goto?ref=master)|
+|Build|[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fyapily%2Fjose-database%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/yapily/jose-database/goto?ref=master)|
 |Code coverage|[![codecov](https://codecov.io/gh/yapily/jose-database/branch/master/graph/badge.svg)](https://codecov.io/gh/yapily/jose-database)
 |Bintray|[![Bintray](https://img.shields.io/bintray/v/qcastel-yapily/jose-database/jose-database.svg?maxAge=2592000)](https://bintray.com/qcastel-yapily/jose-database/jose-database)|
 |License|![license](https://img.shields.io/github/license/yapily/jose-database)|

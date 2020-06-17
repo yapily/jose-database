@@ -141,4 +141,21 @@ class JoseDatabaseAttributeConverterTest {
             joseDatabaseAttributeConverter.convertToEntityAttribute("eyJraWQiOiJ2YWxpZC1zaWduaW5nLWtleSIsImFsZyI6IlBTNTEyIn0.ZXlKcmFXUWlPaUoyWVd4cFpDMWxibU55ZVhCMGFXOXVMV3RsZVNJc0ltVnVZeUk2SWtFeU5UWkhRMDBpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaWZRLm45ZnMzVTl4YWYtLS1MQjBZVWlLdmVZWEZsMU9HcHBDTWxtREVxMnFkU1daR0RjZVk3NWpkX3dvdTdVOWo4Z0RNbUlFN3Z0Z2tXeWdxQlIzcFlOWUJyRzFVVEp2SVFRMWdPY1Y2TmtXbmN2ZlZyNWw2MEI2cHFQWi0wWHc3Z2w4UW9fVjZURWFyRjhMYi05RlZ2RGVpMDY4eHprXzZzSUlNcWFLallOT3RUNGV0S3BNR2MtQ3ZDRmlveWlEQjR3WmlJWTNSWUp1ZkJsbFV6UlY4emtaeWhWMVN5SkIya2p5aERtT0Z1UFJRampmc0o5aHhsRGVuM3dBeFctcy1mclFGb0t0RVFfSjBzVGswSVFVclJhY2Z0bWRFeEdDQjNka21XYk5jWnVac1M2bFM0YTRTMk4zOG9Zcnp0MnlaMWlEYm4tUUhjekhTanJKcm5rcDRnWUxndy5QZ2FhMVFlVzNLLTNMUVFLLnhUaUdWZnVPdFEuY3JhSU0ybWZDbHRTWlpBXzVpaGxxQQ.invalidsignature");
         });
     }
+
+    @Test
+    void convertToEntityAttributeAnUnknownKey() throws Exception {
+        JoseDatabaseConfig config = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
+                .keysPath("keys")
+                .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
+                .jwsAlgorithm(JWSAlgorithm.RS256.getName())
+                .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
+                .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
+                .build());
+        JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
+        JoseDatabaseAttributeConverter joseDatabaseAttributeConverter = new JoseDatabaseAttributeConverter(config, joseDatabaseJWTService);
+
+        assertThrows(IllegalStateException.class, () -> {
+            joseDatabaseAttributeConverter.convertToEntityAttribute("eyJhbGciOiJIUzI1NiIsImtpZCI6InVua25vd24ifQ.ZXlKcmFXUWlPaUoyWVd4cFpDMWxibU55ZVhCMGFXOXVMV3RsZVNJc0ltVnVZeUk2SWtFeU5UWkhRMDBpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaWZRLm45ZnMzVTl4YWYtLS1MQjBZVWlLdmVZWEZsMU9HcHBDTWxtREVxMnFkU1daR0RjZVk3NWpkX3dvdTdVOWo4Z0RNbUlFN3Z0Z2tXeWdxQlIzcFlOWUJyRzFVVEp2SVFRMWdPY1Y2TmtXbmN2ZlZyNWw2MEI2cHFQWi0wWHc3Z2w4UW9fVjZURWFyRjhMYi05RlZ2RGVpMDY4eHprXzZzSUlNcWFLallOT3RUNGV0S3BNR2MtQ3ZDRmlveWlEQjR3WmlJWTNSWUp1ZkJsbFV6UlY4emtaeWhWMVN5SkIya2p5aERtT0Z1UFJRampmc0o5aHhsRGVuM3dBeFctcy1mclFGb0t0RVFfSjBzVGswSVFVclJhY2Z0bWRFeEdDQjNka21XYk5jWnVac1M2bFM0YTRTMk4zOG9Zcnp0MnlaMWlEYm4tUUhjekhTanJKcm5rcDRnWUxndy5QZ2FhMVFlVzNLLTNMUVFLLnhUaUdWZnVPdFEuY3JhSU0ybWZDbHRTWlpBXzVpaGxxQQ.n3wVbDKcCGuDItQ6ct00L3Iq8-Q_PdSm956IhyJHIzKy_vgkODimEVmIO8hH_3VYaTTOa-Kgswg1W1k-b2UHIDLNZqrqDFjPXYjT70b0rSkGmWqtjvtrrfMPszsmdQkdFcqTV7GtZb6K-Kw4bZBao3_MZN1DYLNa8uDfiC-3ccZVCKHohY4awf6o6bvZHR6JzlSEgv0srjaZjsl5o5GsYoES2RJr9SqHp7-Vy9DRrdTiqtaNOyYNAp3MmK3KbaWvripyCgqd5U-5idWPgQ9KJNzPSAu1M2tEAaOXUH3lmmjOiOU_ldca0AnWtN0zBOarcKN-ArViRL-fPMv2t0BwcQ");
+        });
+    }
 }

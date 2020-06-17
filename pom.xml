@@ -20,7 +20,7 @@
 	</parent>
 	<groupId>com.yapily.jose.database</groupId>
 	<artifactId>jose-database</artifactId>
-	<version>0.0.7</version>
+	<version>0.0.8-SNAPSHOT</version>
 	<name>Jose Database</name>
 	<description>Encrypt/Sign database attributes into JWT</description>
 
@@ -35,7 +35,7 @@
 		<connection>scm:git:https://github.com/yapily/jose-database.git</connection>
 		<developerConnection>scm:git:https://github.com/yapily/jose-database.git</developerConnection>
 		<url>https://github.com/yapily/jose-database.git</url>
-		<tag>jose-database-0.0.7</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>

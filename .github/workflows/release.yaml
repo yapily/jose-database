@@ -12,6 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Check Copyright
+        uses: qcastel/github-actions-maven-cmd@master
+        with:
+          maven-args: "license:check"
+
       - name: Build and Test
         uses: qcastel/github-actions-maven-cmd@master
         with:

@@ -147,13 +147,20 @@ public class JoseDatabaseJWTService {
             throw new IllegalStateException("Attribute '" + jwsSerialised + "' encrypted with an unknown key '"
                     + jws.getHeader().getKeyID() + "'");
         }
+        JWSVerifier jwsVerifier;
         if (keyByKeyId.getKeyType() == KeyType.EC) {
             ECKey ecKey = (ECKey) keyByKeyId;
-            jws.verify(new ECDSAVerifier(ecKey));
+            jwsVerifier = new ECDSAVerifier(ecKey);
         } else if (keyByKeyId.getKeyType() == KeyType.RSA) {
             RSAKey rsaKey = (RSAKey) keyByKeyId;
-            jws.verify(new RSASSAVerifier(rsaKey));
+            jwsVerifier = new RSASSAVerifier(rsaKey);
+        } else {
+            throw new IllegalStateException("Unsupported key type '" + keyByKeyId.getKeyType() + "'");
         }
+        if (!jws.verify(jwsVerifier)) {
+            throw new JOSEException("Invalid signature for token '" + jwsSerialised + "'.");
+        }
+
         return jws.getPayload().toString();
     }
 }

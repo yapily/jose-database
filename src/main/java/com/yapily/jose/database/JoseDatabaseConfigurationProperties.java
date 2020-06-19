@@ -18,7 +18,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Configuration
 @ConfigurationProperties(prefix = "jose-database")
@@ -31,23 +35,24 @@ import org.springframework.stereotype.Component;
  */
 public class JoseDatabaseConfigurationProperties {
 
-    private String keysPath = "/";
+
+    private Resource keysPath = new ClassPathResource("/");
     private Actuator actuator;
     private JoseDatabaseTokenFormat tokenFormat = JoseDatabaseTokenFormat.JWS_JWE;
     private String jwsAlgorithm = JWSAlgorithm.PS512.getName();
     private String jweAlgorithm = JWEAlgorithm.RSA_OAEP_256.getName();
     private String encryptionMethod = EncryptionMethod.A256CBC_HS512.getName();
 
-    public String validKeysJsonPath() {
-        return keysPath + "/valid-keys.json";
+    public Resource validKeysJsonPath() throws IOException {
+        return keysPath.createRelative("/valid-keys.json");
     }
 
-    public String expiredKeysJsonPath() {
-        return keysPath + "/expired-keys.json";
+    public Resource expiredKeysJsonPath() throws IOException {
+        return keysPath.createRelative("/expired-keys.json");
     }
 
-    public String revokedKeysJsonPath() {
-        return keysPath + "/revoked-keys.json";
+    public Resource revokedKeysJsonPath() throws IOException {
+        return keysPath.createRelative( "/revoked-keys.json");
     }
 
     @Data

@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -41,28 +42,28 @@ class JoseDatabaseAttributeConverterTest {
     private static Stream<Arguments> provideJoseDatabaseConfigs() throws Exception {
         return Stream.of(
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys")
+                        .keysPath(new ClassPathResource("keys/"))
                         .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                         .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
                         .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                         .build())),
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys")
+                        .keysPath(new ClassPathResource("keys/"))
                         .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                         .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWS)
                         .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                         .build())),
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys")
+                        .keysPath(new ClassPathResource("keys/"))
                         .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                         .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWE_JWS)
                         .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                         .build())),
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys")
+                        .keysPath(new ClassPathResource("keys/"))
                         .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                         .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWE)
@@ -111,7 +112,7 @@ class JoseDatabaseAttributeConverterTest {
     @Test
     void convertToEntityAttributeAnInvalidFormatToken() throws Exception {
         JoseDatabaseConfig config = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys")
+                .keysPath(new ClassPathResource("keys/"))
                 .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                 .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                 .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
@@ -128,7 +129,7 @@ class JoseDatabaseAttributeConverterTest {
     @Test
     void convertToEntityAttributeAnInvalidSignatureToken() throws Exception {
         JoseDatabaseConfig config = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys")
+                .keysPath(new ClassPathResource("keys/"))
                 .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                 .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                 .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
@@ -145,7 +146,7 @@ class JoseDatabaseAttributeConverterTest {
     @Test
     void convertToEntityAttributeAnUnknownKey() throws Exception {
         JoseDatabaseConfig config = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys")
+                .keysPath(new ClassPathResource("keys/"))
                 .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                 .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                 .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)

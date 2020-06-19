@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.Security;
 import java.util.Optional;
 
@@ -49,14 +50,14 @@ public class JoseDatabaseConfig {
 
         this.joseDatabaseConfigurationProperties = joseDatabaseConfigurationProperties;
 
-        File validKeysFile = new ClassPathResource(joseDatabaseConfigurationProperties.validKeysJsonPath()).getFile();
+        File validKeysFile = joseDatabaseConfigurationProperties.validKeysJsonPath().getFile();
         if (!validKeysFile.exists()) {
             log.error("Valid keys Json file '{}' doesn't exist", joseDatabaseConfigurationProperties.validKeysJsonPath());
             throw new IllegalStateException("Valid keys Json file '" + joseDatabaseConfigurationProperties.validKeysJsonPath() + "' doesn't exist");
         }
         validJwkSet = JWKSet.load(validKeysFile);
 
-        File expiredKeysFile = new ClassPathResource(joseDatabaseConfigurationProperties.expiredKeysJsonPath()).getFile();
+        File expiredKeysFile = joseDatabaseConfigurationProperties.expiredKeysJsonPath().getFile();
         if (!expiredKeysFile.exists()) {
             log.warn("Expired keys Json file '{}' doesn't exist", joseDatabaseConfigurationProperties.expiredKeysJsonPath());
             expiredJwkSet = new JWKSet();
@@ -64,7 +65,7 @@ public class JoseDatabaseConfig {
             expiredJwkSet = JWKSet.load(expiredKeysFile);
         }
 
-        File revokedKeysFile = new ClassPathResource(joseDatabaseConfigurationProperties.revokedKeysJsonPath()).getFile();
+        File revokedKeysFile = joseDatabaseConfigurationProperties.revokedKeysJsonPath().getFile();
         if (!revokedKeysFile.exists()) {
             log.warn("Revoked keys Json file '{}' doesn't exist", joseDatabaseConfigurationProperties.revokedKeysJsonPath());
             revokedJwkSet = new JWKSet();
@@ -128,8 +129,8 @@ public class JoseDatabaseConfig {
         return joseDatabaseConfigurationProperties.getTokenFormat();
     }
 
-    public String getKeysPath() {
-        return joseDatabaseConfigurationProperties.getKeysPath();
+    public String getKeysPath() throws IOException {
+        return joseDatabaseConfigurationProperties.getKeysPath().getFile().getPath();
     }
 
     public JWSAlgorithm getJwsAlgorithm() {

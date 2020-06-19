@@ -26,11 +26,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -56,14 +58,14 @@ class JoseDatabaseJWTServiceTest {
     private static Stream<Arguments> provideJoseDatabaseConfigs() throws Exception {
         return Stream.of(
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys-rsa")
+                        .keysPath(new ClassPathResource("keys-rsa/"))
                         .jweAlgorithm(JWEAlgorithm.RSA_OAEP_256.getName())
                         .jwsAlgorithm(JWSAlgorithm.RS256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
                         .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                         .build())),
                 Arguments.of(new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                        .keysPath("keys-ec")
+                        .keysPath(new ClassPathResource("keys-ec/"))
                         .jweAlgorithm(JWEAlgorithm.ECDH_ES_A256KW.getName())
                         .jwsAlgorithm(JWSAlgorithm.ES256.getName())
                         .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
@@ -74,11 +76,11 @@ class JoseDatabaseJWTServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideJoseDatabaseConfigs")
-    void encryptPayload(JoseDatabaseConfig config) throws JOSEException, ParseException {
+    void encryptPayload(JoseDatabaseConfig config) throws JOSEException, ParseException, IOException {
         JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
 
         JWEObject jwe = JWEObject.parse(joseDatabaseJWTService.encryptPayload(payload));
-        if (config.getKeysPath().equals("keys-rsa")) {
+        if (config.getJwsAlgorithm().equals(JWSAlgorithm.RS256)) {
             jwe.decrypt(new RSADecrypter((RSAKey) config.getCurrentEncryptionKey().get()));
         } else {
             jwe.decrypt(new ECDHDecrypter((ECKey) config.getCurrentEncryptionKey().get()));
@@ -95,13 +97,13 @@ class JoseDatabaseJWTServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideJoseDatabaseConfigs")
-    void signPayload(JoseDatabaseConfig config) throws JOSEException, ParseException {
+    void signPayload(JoseDatabaseConfig config) throws JOSEException, ParseException, IOException {
         JoseDatabaseJWTService joseDatabaseJWTService = new JoseDatabaseJWTService(config);
 
         JWSObject jwsObject = JWSObject.parse(joseDatabaseJWTService.signPayload(payload));
 
         JWSVerifier verifier;
-        if (config.getKeysPath().equals("keys-rsa")) {
+        if (config.getJwsAlgorithm().equals(JWSAlgorithm.RS256)) {
             verifier = new RSASSAVerifier((RSAKey) config.getCurrentSigningKey().get());
         } else {
             verifier = new ECDSAVerifier((ECKey) config.getCurrentSigningKey().get());

@@ -1,5 +1,5 @@
 jose-database:
-  keys-path: keys
+  keys-path: keys/
   encryption-method: A128CBC-HS256
   token-format: JWS_JWE
   actuator:

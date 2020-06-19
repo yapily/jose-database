@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -36,7 +37,7 @@ class JoseDatabaseActuatorEndpointTest {
     @Test
     public void testActuatorShowDetails() throws Exception {
         JoseDatabaseConfig joseDatabaseConfig = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys")
+                .keysPath(new ClassPathResource("keys/"))
                 .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
                 .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                 .actuator(JoseDatabaseConfigurationProperties.Actuator.builder()
@@ -72,7 +73,7 @@ class JoseDatabaseActuatorEndpointTest {
     @Test
     public void testActuatorShowMin() throws Exception {
         JoseDatabaseConfig joseDatabaseConfig = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys")
+                .keysPath(new ClassPathResource("keys/"))
                 .tokenFormat(JoseDatabaseTokenFormat.JWS_JWE)
                 .encryptionMethod(EncryptionMethod.A256CBC_HS512.getName())
                 .actuator(JoseDatabaseConfigurationProperties.Actuator.builder()

@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -69,7 +70,7 @@ public class JoseDatabaseConfigTest {
     @Test
     public void testJWSOnly() throws Exception {
         JoseDatabaseConfig joseDatabaseConfig = new JoseDatabaseConfig(JoseDatabaseConfigurationProperties.builder()
-                .keysPath("keys-jws")
+                .keysPath(new ClassPathResource("keys-jws/"))
                 .tokenFormat(JoseDatabaseTokenFormat.JWS)
                 .build());
 

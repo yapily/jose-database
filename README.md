@@ -44,8 +44,8 @@ Then add the maven dependency:
 
 ```
 <dependency>
-    <groupId>dev.openbanking4.spring.security</groupId>
-    <artifactId>spring-security-multi-auth-starter</artifactId>
+    <groupId>com.yapily.jose.database</groupId>
+    <artifactId>jose-database</artifactId>
     <version>{latest.version}</version>
 </dependency>
 ```

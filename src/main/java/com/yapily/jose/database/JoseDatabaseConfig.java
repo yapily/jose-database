@@ -50,6 +50,7 @@ public class JoseDatabaseConfig {
 
         this.joseDatabaseConfigurationProperties = joseDatabaseConfigurationProperties;
 
+        log.debug("The key path: {}", joseDatabaseConfigurationProperties.getKeysPath().getFile().getAbsoluteFile());
         File validKeysFile = joseDatabaseConfigurationProperties.validKeysJsonPath().getFile();
         if (!validKeysFile.exists()) {
             log.error("Valid keys Json file '{}' doesn't exist", joseDatabaseConfigurationProperties.validKeysJsonPath());

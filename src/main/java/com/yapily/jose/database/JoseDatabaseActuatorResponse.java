@@ -9,9 +9,13 @@
  */
 package com.yapily.jose.database;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.yapily.jose.database.serialisers.nimbus.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,15 +27,28 @@ import java.util.Map;
 /**
  * The Pojo of the custom actuator endpoint. Gives information about what JOSE settings is in place and the current keys loaded
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JoseDatabaseActuatorResponse {
 
     //On all details
+    @JsonSerialize(using = JWKSetSerializer.class)
+    @JsonDeserialize(using = JWKSetDeserializer.class)
     private JWKSet validKeys;
+    @JsonSerialize(using = JWKSetSerializer.class)
+    @JsonDeserialize(using = JWKSetDeserializer.class)
     private JWKSet expiredKeys;
+    @JsonSerialize(using = JWKSetSerializer.class)
+    @JsonDeserialize(using = JWKSetDeserializer.class)
     private JWKSet revokedKeys;
 
+    @JsonSerialize(using = JWKSerializer.class)
+    @JsonDeserialize(using = JWKDeserializer.class)
     private JWK currentEncryptionKey;
+    @JsonSerialize(using = JWKSerializer.class)
+    @JsonDeserialize(using = JWKDeserializer.class)
     private JWK currentSigningKey;
+    @JsonSerialize(using = EncryptionMethodSerializer.class)
+    @JsonDeserialize(using = EncryptionMethodDeserializer.class)
     private EncryptionMethod encryptionMethod;
 
     //On short view

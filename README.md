@@ -9,27 +9,27 @@
 
 Encrypt/sign a field of your database using the JOSE standard.
 
-Instead of storing in clear a field, like the emails of a user, this library will help you packaging those emails into a JWS(JWE), like:
+Instead of storing data like the emails of a user in plain text, this library will help you encrypt data into a JWS(JWE), like:
 
 ```
 eyJraWQiOiJ2YWxpZC1zaWduaW5nLWtleSIsImFsZyI6IlBTNTEyIn0.ZXlKcmFXUWlPaUoyWVd4cFpDMWxibU55ZVhCMGFXOXVMV3RsZVNJc0ltVnVZeUk2SWtFeU5UWkhRMDBpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaWZRLm45ZnMzVTl4YWYtLS1MQjBZVWlLdmVZWEZsMU9HcHBDTWxtREVxMnFkU1daR0RjZVk3NWpkX3dvdTdVOWo4Z0RNbUlFN3Z0Z2tXeWdxQlIzcFlOWUJyRzFVVEp2SVFRMWdPY1Y2TmtXbmN2ZlZyNWw2MEI2cHFQWi0wWHc3Z2w4UW9fVjZURWFyRjhMYi05RlZ2RGVpMDY4eHprXzZzSUlNcWFLallOT3RUNGV0S3BNR2MtQ3ZDRmlveWlEQjR3WmlJWTNSWUp1ZkJsbFV6UlY4emtaeWhWMVN5SkIya2p5aERtT0Z1UFJRampmc0o5aHhsRGVuM3dBeFctcy1mclFGb0t0RVFfSjBzVGswSVFVclJhY2Z0bWRFeEdDQjNka21XYk5jWnVac1M2bFM0YTRTMk4zOG9Zcnp0MnlaMWlEYm4tUUhjekhTanJKcm5rcDRnWUxndy5QZ2FhMVFlVzNLLTNMUVFLLnhUaUdWZnVPdFEuY3JhSU0ybWZDbHRTWlpBXzVpaGxxQQ.n3wVbDKcCGuDItQ6ct00L3Iq8-Q_PdSm956IhyJHIzKy_vgkODimEVmIO8hH_3VYaTTOa-Kgswg1W1k-b2UHIDLNZqrqDFjPXYjT70b0rSkGmWqtjvtrrfMPszsmdQkdFcqTV7GtZb6K-Kw4bZBao3_MZN1DYLNa8uDfiC-3ccZVCKHohY4awf6o6bvZHR6JzlSEgv0srjaZjsl5o5GsYoES2RJr9SqHp7-Vy9DRrdTiqtaNOyYNAp3MmK3KbaWvripyCgqd5U-5idWPgQ9KJNzPSAu1M2tEAaOXUH3lmmjOiOU_ldca0AnWtN0zBOarcKN-ArViRL-fPMv2t0BwcQ
 ```
 
-The main advantages is the inter-operability of using JOSE as a way of encrypting/signing this attribute.
+The main advantage is the inter-operability of using JOSE; It can be used to both encrypt/sign data fields and to encrypt the encryption keys.
 
 
 # Features:
 
-- Format the attribute as JWS, JWE, JWS(JWE) or JWE(JWS)
-- The format of the keys are in a JWK format, for also a better inter-operability
-- Allow a key rotation implementation by having the concept of valid keys, expired keys and revoked keys
-- Custom actuator endpoint to identify the current state of the keys, from the angle of your micro-service
+- The ability to format data fields as JWS, JWE, JWS(JWE) or JWE(JWS)
+- The format of the keys are also in the JWK format for better inter-operability
+- A key rotation mechanism through the concept of valid keys, expired keys and revoked keys
+- A custom actuator endpoint for your micro-service to identify the current state of the keys
 
 # How to install
 
 ## Dependency
 
-The library is on jcenter, you will first need to add jcenter repository into your pom
+You will first need to download the libaray from jcenter by addding the following repository to your pom
 
 ```$xslt
 <repositories>
@@ -51,14 +51,14 @@ Then add the maven dependency:
 ```
 Replacing `{latest.tag}`:
 
-As we are in CI and every commit is a release, it's very hard to predict the version number in this readme.
+As we are using CI and every commit is a release, it's very hard to predict the version number in this readme.
 In order to know the latest version, have a look at the tags list on this repo. The latest tag should be the version you should use
 
-Another way is to go directly to the jcenter central repository, and look for this project: https://bintray.com/beta/#/qcastel-yapily/jose-database/jose-database?tab=overview
+Alternatively, go directly to the jcenter central repository, and look for this project: https://bintray.com/beta/#/qcastel-yapily/jose-database/jose-database?tab=overview
 Jcenter will point you to the latest version to use.
 
 ## Injecting the keys to your micro-services
-The library expect as input a set of keys. The recommendation would be to inject them from your kubernetes secrets and putting them in the classpath of the microservice.
+The library expects a set of keys as input. The recommendation would be to inject them from your kubernetes secrets and configuring your microservice to expect them in the classpath.
 Once accessible by the service, the library will load the keys and use them for encrypting/signing/decrypting/validating the fields of your database.
 
 See the `setup the keys` section.
@@ -71,7 +71,7 @@ For specifying a field that requires encryption:
     private String name;
 ```
 
-In spring R2DBC, you will need to bundle the attribute into a  org.springframework.core.convert.converter.Converter. It's super easy don't worry ;)
+In spring R2DBC, you will need to bundle the attribute into a `org.springframework.core.convert.converter.Converter`. It's super easy don't worry ;)
 
 # Configuration
 
@@ -92,14 +92,14 @@ The list of all the other options:
 ## Setup the keys
 
 
-The library is expecting to have the keys into a JWK for, categorised in 3 different type. Each type would be stored in a dedicated json file following the JWK set format.
+The library is expecting to have three JWKs to represent three classifications of keys. Each type would be stored in a dedicated json file following the JWK set format.
 
 You will need to put the:
 - valid keys into a file `valid-keys.json`
 - expired keys into a file `expired-keys.json`
 - revoked keys into a file `revoked-keys.json`
 
-At the start, you probably won't have expired and revoked keys. In that case, just set the keys attribute to an empty array (see example bellow).
+When running for the first time, you probably won't have any expired or any revoked keys. In that case, just set the keys attribute to an empty array (see example bellow).
 
 ### JWK set Format
 
@@ -151,22 +151,22 @@ If you don't have revoked keys yet for example, set:
 
 ## Why do I need to have expired and revoked keys?
 
-This is to allow key rotation. In order to avoid a downtime of your service during the key rotation, you will want to have to expired keys still available in order to decrypt fields that are not yet rotated.
+This is to allow key rotation. In order to avoid downtime of your service during the key rotation, you will want to have to expired keys still available in order to decrypt fields that are not yet rotated.
 This allows a smooth migration window when you rotate your keys.
-The revoked keys is mainly for history but also audit. If for a reason, you got an audit and by chance, you got a snapshot of your database at the time, you can still decrypt the fields and verify the value at the time.
-A general good practice is to not delete a key but more to mark it as revoked.
+The revoked keys is mainly for history but also proves useful in the event of an audit. If you have snapshots of your database for the period of the audit, you will be able to decrypt the fields and verify the value at the time using the now expired keys.
+Generally, it is good practice to mark a key as revoked rather than to delete a key.
 
 The micro-service is not using the revoked keys at all, only displaying them in the actuator endpoints so you can track where you are in your key rotation.
 
 ## Why would I want to encrypt a field using a JWT instead of using KMS?
 
-Performance wise, you can avoid a network call and do the action locally. It's also for a cost reason, by avoiding having to pay for your intense KMS usage. 
-This library offers you the possibilities to use custom keys, that you can encrypt with KMS for example and then into a git repo.
+Performance wise, you can avoid a network call and do the action locally. You also save money by avoiding the cost of intense KMS usage. 
+This library offers you the possibility to use custom keys that you can encrypt with KMS, for example and then commit them to a git repo.
 
 ## Why JOSE?
 
-It's a known standard and well approved in the industry, with libraries in multiple languages. This will facilitate the inter-operability between your different micro-services.
-It also have the advantages to offer the JWK and JWT is a relatively readable manner. 
+It's a known standard and well established in the industry with libraries in multiple languages. This will facilitate the inter-operability between your different micro-services.
+It also has the advantage of offering the JWK and JWT in a relatively readable form. 
 If you want to know more about JOSE, we recommend reading the following standards:
 - JWE - https://tools.ietf.org/html/rfc7516
 - JWS - https://tools.ietf.org/html/rfc7515
@@ -175,9 +175,9 @@ If you want to know more about JOSE, we recommend reading the following standard
 
 ## Should I always use JWS_JWE ?
 
-JWS_JWE is a format when you first encrypt the message and then sign it. Encrypting is quite heady in computation, therefore encryption the smallest payload possible is a good idea.
-Then signing becomes handy if you want to always make sure that the field you read has not be corrupted: Encryption is done using the encryption public key, which is by definition public. 
-The name implies you can share it publicly, although this would mean anyone could inject an encrypted field if you do. Therefore, a good practice is also to sign it on top.
+JWS_JWE is a format where you first encrypt the message and then sign it. Encrypting is quite computationally expensive, therefore encrypting the smallest payload possible is a good idea.
+The signing becomes handy if you want to have confidence that the field you read has not be corrupted: Encryption is done using the public key, which is by definition public. 
+The name implies that you can share this key publicly, although this would mean anyone could inject an encrypted field if you do. However, by signing after encrypting, you will know if the data has been altered.
 
-You may say that you only use JWE and never share the public key. You will be right, although can you garanty that someone won't have the brillant idea to say: "It's a public key so lets make it public!"
-Because it's quite error prone, we recommend to use JWS_JWE, a better robustness at the compromised of performance.
+You may say that you should only use JWE_JWS and never share the public key. Theoretically, you are right, but you can't guarantee that someone will have the brillant of saying: "It's a public key so lets make it public!"
+Because JWE_JWS is quite error prone, we recommend to use JWS_JWE which gives you robustness at the expense of performance.

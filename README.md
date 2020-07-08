@@ -179,5 +179,5 @@ JWS_JWE is a format where you first encrypt the message and then sign it. Encryp
 The signing becomes handy if you want to have confidence that the field you read has not be corrupted: Encryption is done using the encryption public key, which is by definition public. 
 The name implies that you can share this key publicly, although this would mean anyone could inject an encrypted field if you do. However, by signing after encrypting, you will know if the data has been altered.
 
-You may say that you should only use JWE_JWS and never share the public key. Theoretically, you are right, but you can't guarantee that someone will have the brillant of saying: "It's a public key so lets make it public!"
-Because JWE_JWS is quite error prone, we recommend to use JWS_JWE which gives you robustness at the expense of performance.
+You may say that you should only use JWE and never share the public key. Theoretically, you are right, but you can't guarantee that someone will have the brillant of saying: "It's a public key so lets make it public!"
+Because JWE is quite error prone, we recommend to use JWS_JWE which gives you robustness at the expense of performance.

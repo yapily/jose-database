@@ -26,7 +26,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<nimbus.version>8.19</nimbus.version>
+		<nimbus.version>9.1.1</nimbus.version>
 		<javax.version>2.2</javax.version>
 		<bouncy-castle.version>1.65</bouncy-castle.version>
 	</properties>
